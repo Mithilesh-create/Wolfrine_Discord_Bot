@@ -1,19 +1,29 @@
-# Discord Submission Validator BOT
+<p align="center">
+<img src="./img/discord-mascot.png" height=100>
+<img src="./img/heart.png" height=100>
+<img src="./img/BotLogo.jpg" height=100 style="border-radius:50%">
+
+<h1 align="center">
+Discord Submission Validator BOT
+</h1>
+</p>
 
 A discord bot for validating participants submission on discord contests.
 
 ## Built using NODEJS :heart:
 
 ---
+
 ## Requirements 🎓
 
 For development, you will only need Node.js and a node global package, Yarn, installed in your environement.
 
 ### Node
+
 - #### Node installation on Windows
 
   Just go on [official Node.js website](https://nodejs.org/) and download the installer.
-Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
+  Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
 
 - #### Node installation on Ubuntu
 
@@ -38,23 +48,28 @@ If you need to update `npm`, you can make it using `npm`! Cool right? After runn
     $ npm install npm -g
 
 ###
+
 ### Yarn installation
-  After installing node, this project will need yarn too, so just run the following command.
+
+After installing node, this project will need yarn too, so just run the following command.
 
       $ npm install -g yarn
 
 ---
+
 ## Fork this repo for contribution 🦾
 
     Fork this repo in your local github account.
 
 #### Run these commands after fork
-    $ git clone https://github.com/<YOUR_USERNAME>/Wolfrine_Discord_Bot.git    
+
+    $ git clone https://github.com/<YOUR_USERNAME>/Wolfrine_Discord_Bot.git
     $ cd Wolfrine_Discord_Bot
     $ yarn install
 
 #### Set upstream for PR
-    $ git remote add upstream https://github.com/Mithilesh-create/Wolfrine_Discord_Bot.git    
+
+    $ git remote add upstream https://github.com/Mithilesh-create/Wolfrine_Discord_Bot.git
 
 ## Install 💻
 
@@ -69,6 +84,7 @@ Create `.env` file with `.env_example` parameters then edit it with your setting
 - Discord Server ID `GUILD_ID`
 - Discord bot ID `CLIENT_ID`
 - Discord bot secret token ID `TOKEN`
+
 #### checkout .env.example file for more info
 
 ## Running the project
