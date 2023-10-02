@@ -3,13 +3,13 @@ const { REST, Routes } = require("discord.js");
 
 const command = [
   {
-    name: "ping",
-    description: "Replies with hey!",
+    name: "register",
+    description: "Registers you to contest!",
   },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
-(async () => {
+module.exports = async () => {
   try {
     console.log("Started refreshing application (/) commands.");
     await rest.put(
@@ -22,4 +22,4 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
   } catch (error) {
     console.error(error);
   }
-})();
+};

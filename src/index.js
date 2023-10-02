@@ -1,42 +1,43 @@
 require("dotenv").config();
 const getDb = require("./db");
-const { Client, IntentsBitField } = require("discord.js");
-const client = new Client({
-  intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.MessageContent,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-  ],
-});
-getDb().then(() => {
-  client.on("ready", (client) => {
-    console.log(`${client.user.username} is now awaken !`);
-  });
+const getCommands = require("./commands");
+const { client } = require("./router/client");
+const { register } = require("./router/register");
 
-  client.on("messageCreate", (e) => {
-    if (e.author.bot) return;
-    if (e.content === "Hello") {
-      e.reply("Hello");
-    }
-  });
-  client.on("messageCreate", (e) => {
-    if (e.author.bot) return;
-    if (e.content === "Mellow") {
-      client.users.cache.get(e.author.id).send("Hehe boi Got em!!!!");
-    }
-  });
+getDb()
+  .then(() => {
+    getCommands();
+  })
+  .then(() => {
+    client.on("ready", (client) => {
+      console.log(`${client.user.username} is now awaken !`);
+    });
 
-  client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
+    client.on("interactionCreate", async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
+      if (interaction.commandName === "register") {
+        const res = await register(interaction);
+        if (res) {
+          if (res == 2) {
+            await interaction.reply({
+              content: `Hello ${interaction.user.globalName} , You have already registered to this event.`,
+              ephemeral: true,
+            });
+          } else {
+            await interaction.reply({
+              embeds: [res],
+              content: `Hello ${interaction.user.globalName} , You have now successfully registered to this event.`,
+              ephemeral: true,
+            });
+          }
+        } else {
+          await interaction.reply({
+            content: `Sorry ${interaction.user.globalName} , we are facing an issue while registering you 😵 .\n\n Please try again after some time or contact the moderator of server .`,
+            ephemeral: true,
+          });
+        }
+      }
+    });
 
-    if (interaction.commandName === "ping") {
-      await interaction.reply({
-        content: `Hello ${interaction.user.globalName} , You have now successfully registered to this event.`,
-        ephemeral: true,
-      });
-    }
+    client.login(process.env.TOKEN);
   });
-
-  client.login(process.env.TOKEN);
-});
