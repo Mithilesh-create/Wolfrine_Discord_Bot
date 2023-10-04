@@ -4,7 +4,15 @@ const { REST, Routes } = require("discord.js");
 const command = [
   {
     name: "register",
-    description: "Registers you to contest!",
+    description: "Register's you to contest!",
+  },
+  {
+    name: "getdata",
+    description: "Gets all users registered in this contest!",
+  },
+  {
+    name: "getcompleted",
+    description: "Gets all users completed this contest!",
   },
 ];
 

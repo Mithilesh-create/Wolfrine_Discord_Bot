@@ -2,8 +2,7 @@ require("dotenv").config();
 const getDb = require("./db");
 const getCommands = require("./commands");
 const { client } = require("./router/client");
-const { register } = require("./router/register");
-
+const { register, getcompleted } = require("./router/register");
 getDb()
   .then(() => {
     getCommands();
@@ -36,6 +35,17 @@ getDb()
             ephemeral: true,
           });
         }
+      }
+    });
+
+    client.on("interactionCreate", async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
+      if (interaction.commandName === "getdata") {
+        const file = await getcompleted(interaction);
+        await interaction.reply({
+          content: `${file}`,
+          ephemeral: true,
+        });
       }
     });
 
