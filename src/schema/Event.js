@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
-const DailyTask = new mongoose.Schema({
-  posturl: {
+const TaskSchema = new mongoose.Schema({
+  title: {
     type: String,
-    unique: true,
+    required: true,
   },
-  taskurl: {
-    type: String,
-    unique: true,
-  },
-  entry: {
+  createdAt: {
     type: Date,
     default: Date.now(),
   },
 });
 const userSchema = new mongoose.Schema({
-  username: {
+  title: {
+    type: String,
+    required: true,
+  },
+  createduser: {
     type: String,
     required: true,
   },
@@ -35,17 +35,21 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  timestamp: {
+  startdate: {
     type: Date,
     default: Date.now(),
   },
-  task: {
-    type: [DailyTask],
+  enddate: {
+    type: Date,
+    required: true,
   },
-  completed: {
+  active: {
     type: Boolean,
-    default: false,
+    default: true,
+  },
+  task: {
+    type: [TaskSchema],
   },
 });
-const User = mongoose.model("Registered_User", userSchema);
-module.exports = User;
+const Event = mongoose.model("Events", userSchema);
+module.exports = Event;
