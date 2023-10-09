@@ -15,8 +15,7 @@
     "cron": "^3.0.0",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
-    "mongoose": "^7.5.3",
-    "social-links": "^1.14.0"
+    "mongoose": "^7.5.3"
   },
   "engines": {
     "node": ">=16"
