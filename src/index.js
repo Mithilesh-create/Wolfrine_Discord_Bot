@@ -105,12 +105,7 @@ getDb()
           posturl.value
         );
         if (res) {
-          if (res == 4) {
-            await interaction.reply({
-              content: `Invalid Post link !!!!`,
-              ephemeral: true,
-            });
-          } else if (res == 3) {
+          if (res == 3) {
             await interaction.reply({
               content: `There are no active events right now, Submission Discarded !`,
               ephemeral: true,

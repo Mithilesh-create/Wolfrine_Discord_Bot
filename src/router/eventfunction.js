@@ -2,8 +2,6 @@ const User = require("../schema/User");
 const { EmbedBuilder } = require("discord.js");
 var { AsciiTable3, AlignmentEnum } = require("ascii-table3");
 const Event = require("../schema/Event");
-const { SocialLinks } = require("social-links");
-const socialLinks = new SocialLinks();
 
 const register = async (i) => {
   try {
@@ -77,7 +75,7 @@ const registerEvent = async (i, title, start, end) => {
     }
     var startDate = new Date(new Date().setUTCHours(24, 0, 0, 0));
     var startDateRes = startDate.setDate(startDate.getDate() + start);
-    var someDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    var someDate = new Date(new Date().setUTCHours(24, 0, 0, 0));
     var endDateRes = someDate.setDate(someDate.getDate() + start + end);
     const reg = await Event.create({
       title: title,
@@ -167,9 +165,6 @@ const getcompleted = async (i) => {
 };
 const updateDailyTask = async (i, taskurl, posturl) => {
   try {
-    const profileName = socialLinks.detectProfile(posturl);
-
-    if (!socialLinks.isValid(profileName, posturl)) return 4;
     const checkEvent = await Event.findOne({
       channelid: i.channelId,
       serverid: i.guildId,
