@@ -96,6 +96,18 @@ const commands = [
       },
     ],
   },
+  {
+    name: "close-event",
+    description: "Closes the current ongoing event!",
+    options: [
+      {
+        name: "secret-key",
+        description: "Moderator secret key",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+    ],
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);

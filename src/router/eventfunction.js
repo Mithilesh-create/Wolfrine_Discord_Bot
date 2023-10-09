@@ -1,8 +1,10 @@
 const User = require("../schema/User");
-
 const { EmbedBuilder } = require("discord.js");
 var { AsciiTable3, AlignmentEnum } = require("ascii-table3");
 const Event = require("../schema/Event");
+const { SocialLinks } = require("social-links");
+const socialLinks = new SocialLinks();
+
 const register = async (i) => {
   try {
     const check = await User.findOne({
@@ -73,9 +75,9 @@ const registerEvent = async (i, title, start, end) => {
     if (check) {
       return 2;
     }
-    var startDate = new Date();
+    var startDate = new Date(new Date().setUTCHours(24, 0, 0, 0));
     var startDateRes = startDate.setDate(startDate.getDate() + start);
-    var someDate = new Date();
+    var someDate = new Date(new Date().setUTCHours(0, 0, 0, 0));
     var endDateRes = someDate.setDate(someDate.getDate() + start + end);
     const reg = await Event.create({
       title: title,
@@ -101,10 +103,19 @@ const registerEvent = async (i, title, start, end) => {
 };
 const getdata = async (i) => {
   try {
+    const checkEvent = await Event.findOne({
+      channelid: i.channelId,
+      serverid: i.guildId,
+      active: true,
+    });
+    if (!checkEvent) {
+      return 0;
+    }
     const check = await User.find({
       channelid: i.channelId,
       serverid: i.guildId,
     });
+
     var dataArr = [];
     if (check.length > 0) {
       check.forEach((e) => {
@@ -126,7 +137,6 @@ const getdata = async (i) => {
     return 0;
   }
 };
-
 const getcompleted = async (i) => {
   try {
     const check = await User.find({
@@ -155,11 +165,135 @@ const getcompleted = async (i) => {
     return 0;
   }
 };
-const registerTask = async (i, title) => {};
+const updateDailyTask = async (i, taskurl, posturl) => {
+  try {
+    const profileName = socialLinks.detectProfile(posturl);
+
+    if (!socialLinks.isValid(profileName, posturl)) return 4;
+    const checkEvent = await Event.findOne({
+      channelid: i.channelId,
+      serverid: i.guildId,
+      active: true,
+    });
+    if (!checkEvent) {
+      return 3;
+    }
+    const check = await User.find({
+      channelid: i.channelId,
+      serverid: i.guildId,
+      userid: i.user.id,
+    });
+
+    if (check.length == 0) {
+      return 2;
+    }
+    var filter = { userid: i.user.id };
+
+    const updatedEntry = await User.findOneAndUpdate(
+      filter,
+      {
+        $push: {
+          task: { taskurl, posturl },
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (!updatedEntry) {
+      return 0;
+    }
+    return 1;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
+const registerTask = async (i, title) => {
+  try {
+    const checkEvent = await Event.findOne({
+      channelid: i.channelId,
+      serverid: i.guildId,
+      active: true,
+    });
+    if (!checkEvent) {
+      return 2;
+    }
+
+    const updatedEntry = await Event.findOneAndUpdate(
+      {
+        channelid: i.channelId,
+        serverid: i.guildId,
+        active: true,
+      },
+      {
+        $push: {
+          task: { title },
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (!updatedEntry) {
+      return 0;
+    }
+    return 1;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
+const closeEvent = async (i) => {
+  try {
+    const checkEvent = await Event.findOne({
+      channelid: i.channelId,
+      serverid: i.guildId,
+      active: true,
+    });
+    if (!checkEvent) {
+      return 1;
+    }
+
+    const check = await Event.findOneAndUpdate(
+      {
+        channelid: i.channelId,
+        serverid: i.guildId,
+        active: true,
+      },
+      {
+        $set: {
+          active: false,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    if (check) {
+      const NoEventEmbed = new EmbedBuilder()
+        .setColor(0x0099ff)
+        .setTitle(`${checkEvent.title} Closed Successfully !\n\n`)
+        .setDescription("Dear moderator have closed this event !\n\n")
+        .setFooter({
+          text: "Happy coding to you 🚀",
+        })
+        .setTimestamp();
+      return NoEventEmbed;
+    } else {
+      return 0;
+    }
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
 module.exports = {
   register,
   getcompleted,
   getdata,
   registerEvent,
   registerTask,
+  updateDailyTask,
+  closeEvent,
 };

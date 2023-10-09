@@ -8,8 +8,9 @@ const {
   getdata,
   registerEvent,
   registerTask,
-} = require("./router/register");
-const { updateDailyTask } = require("./router/update");
+  updateDailyTask,
+  closeEvent,
+} = require("./router/eventfunction");
 getDb()
   .then(() => {
     getCommands();
@@ -43,7 +44,6 @@ getDb()
         }
       }
     });
-
     client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
       if (interaction.commandName === "getdata") {
@@ -56,13 +56,19 @@ getDb()
           return;
         }
         const file = await getdata(interaction);
+        if (!file) {
+          await interaction.reply({
+            content: `No active events !!!!!!!!!!!!`,
+            ephemeral: true,
+          });
+          return;
+        }
         await interaction.reply({
           content: `${file}`,
           ephemeral: true,
         });
       }
     });
-
     client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
       if (interaction.commandName === "getcompleted") {
@@ -75,6 +81,13 @@ getDb()
           return;
         }
         const file = await getcompleted(interaction);
+        if (!file) {
+          await interaction.reply({
+            content: `No active events !!!!!!!!!!!!`,
+            ephemeral: true,
+          });
+          return;
+        }
         await interaction.reply({
           content: `${file}`,
           ephemeral: true,
@@ -92,7 +105,12 @@ getDb()
           posturl.value
         );
         if (res) {
-          if (res == 3) {
+          if (res == 4) {
+            await interaction.reply({
+              content: `Invalid Post link !!!!`,
+              ephemeral: true,
+            });
+          } else if (res == 3) {
             await interaction.reply({
               content: `There are no active events right now, Submission Discarded !`,
               ephemeral: true,
@@ -158,12 +176,46 @@ getDb()
     });
     client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
-      if (interaction.commandName === "register-task") {
-        let title = interaction.options.get("task-title");
+      if (interaction.commandName === "close-event") {
         let secret = interaction.options.get("secret-key");
         if (secret.value != process.env.SECRET_KEY) {
           await interaction.reply({
-            content: `You are not authorized to create tasks !`,
+            content: `You are not authorized to use this command !`,
+            ephemeral: true,
+          });
+          return;
+        }
+        const file = await closeEvent(interaction);
+        if (file) {
+          if (file == 1) {
+            await interaction.reply({
+              content: `No active events !!!!!!!!!!!!`,
+              ephemeral: true,
+            });
+            return;
+          } else {
+            await interaction.reply({
+              embeds: [file],
+              ephemeral: true,
+            });
+          }
+        } else {
+          await interaction.reply({
+            content: `Sorry ${interaction.user.globalName} , we are facing an issue while closing your event 😵 .\n\n Please try again after some time .`,
+            ephemeral: true,
+          });
+        }
+      }
+    });
+    client.on("interactionCreate", async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
+      if (interaction.commandName === "register-task") {
+        let secret = interaction.options.get("secret-key");
+        let title = interaction.options.get("task-title");
+
+        if (secret.value != process.env.SECRET_KEY) {
+          await interaction.reply({
+            content: `You are not authorized to use this command !`,
             ephemeral: true,
           });
           return;
@@ -172,18 +224,18 @@ getDb()
         if (res) {
           if (res == 2) {
             await interaction.reply({
-              content: `Hello ${interaction.user.globalName} , there is already an active task going on today in this channel !`,
+              content: `No active events !!!!!!!!!!!!`,
               ephemeral: true,
             });
           } else {
             await interaction.reply({
-              content: `Hello ${interaction.user.globalName} , You have Successfully created task ${title.value} !`,
+              content: `Today's task registered !!!!!!!!!!!!`,
               ephemeral: true,
             });
           }
         } else {
           await interaction.reply({
-            content: `Sorry ${interaction.user.globalName} , we are facing an issue while creating your event 😵 .\n\n Please try again after some time .`,
+            content: `Sorry ${interaction.user.globalName} , we are facing an issue while registering today's task 😵 .\n\n Please try again after some time .`,
             ephemeral: true,
           });
         }
