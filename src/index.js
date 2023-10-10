@@ -99,13 +99,19 @@ getDb()
       if (interaction.commandName === "daily") {
         let taskurl = interaction.options.get("taskurl");
         let posturl = interaction.options.get("posturl");
+
         const res = await updateDailyTask(
           interaction,
           taskurl.value,
           posturl.value
         );
         if (res) {
-          if (res == 3) {
+          if (res == 4) {
+            await interaction.reply({
+              content: `You are disqualified from event, Submission Discarded !`,
+              ephemeral: true,
+            });
+          } else if (res == 3) {
             await interaction.reply({
               content: `There are no active events right now, Submission Discarded !`,
               ephemeral: true,

@@ -173,13 +173,17 @@ const updateDailyTask = async (i, taskurl, posturl) => {
     if (!checkEvent) {
       return 3;
     }
-    const check = await User.find({
+    const check = await User.findOne({
       channelid: i.channelId,
       serverid: i.guildId,
       userid: i.user.id,
+      completed: false,
     });
+    if (!(checkEvent.task.length === check.task.length-1)) {
+      return 4;
+    }
 
-    if (check.length == 0) {
+    if (!check) {
       return 2;
     }
     var filter = { userid: i.user.id };
@@ -198,12 +202,14 @@ const updateDailyTask = async (i, taskurl, posturl) => {
     if (!updatedEntry) {
       return 0;
     }
+
     return 1;
   } catch (error) {
     console.log(error);
     return 0;
   }
 };
+
 const registerTask = async (i, title) => {
   try {
     const checkEvent = await Event.findOne({
@@ -233,7 +239,16 @@ const registerTask = async (i, title) => {
     if (!updatedEntry) {
       return 0;
     }
-    return 1;
+    const checkUsers = await User.find({
+      channelid: i.channelId,
+      serverid: i.guildId,
+    });
+    checkUsers.forEach((member) => {
+      i.client.users.send(
+        member.userid,
+        "New task is added complete it now to not break your streak....."
+      );
+    });
   } catch (error) {
     console.log(error);
     return 0;
