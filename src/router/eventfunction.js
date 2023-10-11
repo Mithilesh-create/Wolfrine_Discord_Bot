@@ -62,7 +62,7 @@ const register = async (i) => {
     return 0;
   }
 };
-const registerEvent = async (i, title, start, end) => {
+const registerEvent = async (i, title, start, end, NoOfSubs) => {
   try {
     const check = await Event.findOne({
       userid: i.user.id,
@@ -87,6 +87,7 @@ const registerEvent = async (i, title, start, end) => {
       createduser: i.user.globalName,
       servername: i.member.guild.name,
       active: true,
+      numberOfSubmissions: NoOfSubs,
     });
 
     if (!reg) {
@@ -104,7 +105,6 @@ const getdata = async (i) => {
     const checkEvent = await Event.findOne({
       channelid: i.channelId,
       serverid: i.guildId,
-      active: true,
     });
     if (!checkEvent) {
       return 0;
@@ -179,12 +179,15 @@ const updateDailyTask = async (i, taskurl, posturl) => {
       userid: i.user.id,
       completed: false,
     });
-    if (!(checkEvent.task.length === check.task.length-1)) {
-      return 4;
-    }
 
     if (!check) {
       return 2;
+    }
+    if (!check.active) {
+      return 4;
+    }
+    if (check.task.length === checkEvent.task.length) {
+      return 5;
     }
     var filter = { userid: i.user.id };
 
@@ -202,6 +205,13 @@ const updateDailyTask = async (i, taskurl, posturl) => {
     if (!updatedEntry) {
       return 0;
     }
+    if (updatedEntry.task.length === checkEvent.numberOfSubmissions) {
+      await User.findOneAndUpdate(filter, {
+        $set: {
+          completed: true,
+        },
+      });
+    }
 
     return 1;
   } catch (error) {
@@ -209,7 +219,6 @@ const updateDailyTask = async (i, taskurl, posturl) => {
     return 0;
   }
 };
-
 const registerTask = async (i, title) => {
   try {
     const checkEvent = await Event.findOne({
@@ -217,7 +226,10 @@ const registerTask = async (i, title) => {
       serverid: i.guildId,
       active: true,
     });
-    if (!checkEvent) {
+    if (
+      !checkEvent ||
+      checkEvent.task.length >= checkEvent.numberOfSubmissions
+    ) {
       return 2;
     }
 
@@ -239,16 +251,36 @@ const registerTask = async (i, title) => {
     if (!updatedEntry) {
       return 0;
     }
+
     const checkUsers = await User.find({
       channelid: i.channelId,
       serverid: i.guildId,
     });
+    var disqualifiedUsers = [];
     checkUsers.forEach((member) => {
-      i.client.users.send(
-        member.userid,
-        "New task is added complete it now to not break your streak....."
+      if (member.task.length === checkEvent.task.length) {
+        i.client.users.send(
+          member.userid,
+          "New task is added complete it now to not break your streak....."
+        );
+      } else {
+        disqualifiedUsers.push(member);
+      }
+    });
+    console.log(disqualifiedUsers);
+    disqualifiedUsers.map(async (user) => {
+      await User.findOneAndUpdate(
+        {
+          userid: user.userid,
+        },
+        {
+          $set: {
+            active: false,
+          },
+        }
       );
     });
+    return 1;
   } catch (error) {
     console.log(error);
     return 0;

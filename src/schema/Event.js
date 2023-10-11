@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  numberOfSubmissions: {
+    type: Number,
+    required: true,
+  },
   task: {
     type: [TaskSchema],
   },

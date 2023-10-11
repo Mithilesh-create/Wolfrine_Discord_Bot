@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 const User = mongoose.model("Registered_User", userSchema);
 module.exports = User;

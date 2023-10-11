@@ -106,6 +106,12 @@ getDb()
           posturl.value
         );
         if (res) {
+          if (res == 5) {
+            await interaction.reply({
+              content: `Hello ${interaction.user.globalName} , there is no active task right now !`,
+              ephemeral: true,
+            });
+          }
           if (res == 4) {
             await interaction.reply({
               content: `You are disqualified from event, Submission Discarded !`,
@@ -141,6 +147,9 @@ getDb()
         let title = interaction.options.get("event-title");
         let start = interaction.options.get("event-start-date");
         let end = interaction.options.get("event-end-date");
+        let numberOfSubmissions = interaction.options.get(
+          "number-of-submissions"
+        );
         let secret = interaction.options.get("secret-key");
         if (secret.value != process.env.SECRET_KEY) {
           await interaction.reply({
@@ -153,7 +162,8 @@ getDb()
           interaction,
           title.value,
           start.value,
-          end.value
+          end.value,
+          numberOfSubmissions.value
         );
         if (res) {
           if (res == 2) {
@@ -225,7 +235,7 @@ getDb()
         if (res) {
           if (res == 2) {
             await interaction.reply({
-              content: `No active events !!!!!!!!!!!!`,
+              content: `No active events or all event tasks are added !!!!!!!!!!!!`,
               ephemeral: true,
             });
           } else {

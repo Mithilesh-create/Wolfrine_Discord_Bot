@@ -60,14 +60,20 @@ const commands = [
       },
       {
         name: "event-start-date",
-        description: "Starting date of event (days)",
+        description: "Starting date of event (number)",
         type: ApplicationCommandOptionType.Number,
         required: true,
       },
       {
         name: "event-end-date",
-        description: "Ending date of event (days)",
+        description: "Ending date of event (number)",
         type: ApplicationCommandOptionType.Number,
+        required: true,
+      },
+      {
+        name: "number-of-submissions",
+        description: "Number of submissions required from participants !",
+        type: ApplicationCommandOptionType.String,
         required: true,
       },
       {
