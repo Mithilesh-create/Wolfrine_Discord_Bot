@@ -2,6 +2,12 @@ require("dotenv").config();
 const getDb = require("./db");
 const getCommands = require("./commands");
 const { client } = require("./router/client");
+const express = require("express");
+const app = express();
+app.use(express.json());
+
+const port = process.env.PORT;
+
 const {
   register,
   getcompleted,
@@ -252,6 +258,13 @@ getDb()
         }
       }
     });
-
     client.login(process.env.TOKEN);
+  })
+  .then(() => {
+    app.get("/", async (req, res) => {
+      res.status(200).send("Hello world");
+    });
+    app.listen(port, () => {
+      console.log(`server has started at port ${port}`);
+    });
   });

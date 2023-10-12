@@ -89,7 +89,6 @@ const registerEvent = async (i, title, start, end, NoOfSubs) => {
       active: true,
       numberOfSubmissions: NoOfSubs,
     });
-
     if (!reg) {
       console.log("error");
       return 0;
@@ -255,30 +254,26 @@ const registerTask = async (i, title) => {
     const checkUsers = await User.find({
       channelid: i.channelId,
       serverid: i.guildId,
+      active: true,
     });
-    var disqualifiedUsers = [];
-    checkUsers.forEach((member) => {
+    checkUsers.map(async (member) => {
       if (member.task.length === checkEvent.task.length) {
         i.client.users.send(
           member.userid,
           "New task is added complete it now to not break your streak....."
         );
       } else {
-        disqualifiedUsers.push(member);
-      }
-    });
-    console.log(disqualifiedUsers);
-    disqualifiedUsers.map(async (user) => {
-      await User.findOneAndUpdate(
-        {
-          userid: user.userid,
-        },
-        {
-          $set: {
-            active: false,
+        await User.findOneAndUpdate(
+          {
+            userid: member.userid,
           },
-        }
-      );
+          {
+            $set: {
+              active: false,
+            },
+          }
+        );
+      }
     });
     return 1;
   } catch (error) {
@@ -321,6 +316,39 @@ const closeEvent = async (i) => {
           text: "Happy coding to you 🚀",
         })
         .setTimestamp();
+
+      const checkUsers = await User.find({
+        channelid: i.channelId,
+        serverid: i.guildId,
+        active: true,
+      });
+
+      checkUsers.map(async (member) => {
+        if (member.task.length === checkEvent.task.length) {
+          await User.findOneAndUpdate(
+            {
+              userid: member.userid,
+            },
+            {
+              $set: {
+                completed: true,
+              },
+            }
+          );
+        } else {
+          await User.findOneAndUpdate(
+            {
+              userid: member.userid,
+            },
+            {
+              $set: {
+                active: false,
+              },
+            }
+          );
+        }
+      });
+
       return NoEventEmbed;
     } else {
       return 0;
