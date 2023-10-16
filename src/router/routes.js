@@ -6,6 +6,9 @@ const User = require("../schema/User");
 const Event = require("../schema/Event");
 router.use(express.json());
 router.use(cors());
+router.get("/", async (req, res) => {
+  res.status(200).send("Route is correct");
+});
 router.post("/checkAuth", async (req, res) => {
   try {
     if (req.body.secret != process.env.SECRET_KEY)
@@ -27,6 +30,7 @@ router.post("/checkAuth", async (req, res) => {
     });
   }
 });
+
 router.post("/getdata", async (req, res) => {
   try {
     const check = await User.find({
