@@ -94,3 +94,55 @@ Create `.env` file with `.env_example` parameters then edit it with your setting
 ## Simple build for production
 
     $ yarn build
+
+# Discord Commands with params
+
+## Moderator of server
+
+### Register new event in channel
+    /register-event
+        Event-Title
+        Start-Date
+        End-Date
+        No-of-Submissions
+        Secret-Key
+
+### Register new task in channel
+    /register-task
+        Task-Title
+        Secret-Key
+
+### Get Registered users
+    /getdata
+        Secret-Key
+
+### Get Completed users
+    /getcompleted
+        Secret-Key
+
+### Close Event
+    /close-event
+        Secret-Key
+
+## Participant in event (USER)
+
+### Register to active event in channel
+    /register
+        
+
+### Submit daily task in channel
+    /daily-task
+        task-url
+        post-url
+
+
+# NOTE !!!!!!!
+### Time peroid of eligibility of user
+
+    If `task 1` is added by moderator then the user has to complete the task before :
+
+        1. Moderator adds another task i.e. in this case `task 2`
+        2. Moderator closes the event by `/close-event` command.
+
+    If user submits daily task before this then the user considers as eligible.
+
