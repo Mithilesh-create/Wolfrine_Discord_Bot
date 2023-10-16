@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "ascii-table3": "^0.8.2",
+    "cors": "^2.8.5",
     "cron": "^3.0.0",
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",

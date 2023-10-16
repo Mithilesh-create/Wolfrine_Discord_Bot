@@ -4,7 +4,11 @@ const getCommands = require("./commands");
 const { client } = require("./router/client");
 const express = require("express");
 const app = express();
+const cors=require("cors");
 app.use(express.json());
+const router = require("./router/routes")
+app.use("/crud", router);
+router.use(cors());
 
 const port = process.env.PORT;
 
